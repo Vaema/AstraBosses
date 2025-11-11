@@ -3,7 +3,7 @@ using Terraria.ModLoader.Config;
 
 namespace AstraBosses.Common.Configuration;
 
-public class AstraConfig : ModConfig
+public class AstraServerConfig : ModConfig
 {
     public override ConfigScope Mode => ConfigScope.ServerSide;
 

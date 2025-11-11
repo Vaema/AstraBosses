@@ -1,4 +1,4 @@
-displayName = Astra's Vanilla+ Boss Reworks
+displayName = Astra's Bosses
 author = Astra
 version = 1.0
 
@@ -6,4 +6,4 @@ hideCode = false
 hideResources = false
 includeSource = true
 
-buildIgnore = .vs\*, .idea\*, *.sln, *.csproj, *.user, obj\*, bin\*, *.config, .git\*, .github\*, LICENSE.txt, README.md, .editorconfig, .gitignore, .gitattributes
+buildIgnore = .vs\*, .idea\*, *.sln, *.csproj, *.user, *.md, obj\*, bin\*, *.config, .git\*, .github\*, .editorconfig, .gitignore, .gitattributes

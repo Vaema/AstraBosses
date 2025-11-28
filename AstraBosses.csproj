@@ -1,6 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!-- Import tModLoader mod properties -->
 	<Import Project="..\tModLoader.targets" />
+
+	<!-- General -->
+	<PropertyGroup>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- Warning suppression -->
+		<NoWarn>MSB3270</NoWarn>
+	</PropertyGroup>
+
+	<!-- References -->
+	<ItemGroup>
+		<!-- Include all DLLs in lib/ -->
+		<Reference Include="lib/**/*.dll"/>
+	</ItemGroup>
 
 </Project>

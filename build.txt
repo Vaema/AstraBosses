@@ -6,4 +6,8 @@ hideCode = false
 hideResources = false
 includeSource = true
 
-buildIgnore = .vs\*, .idea\*, *.sln, *.csproj, *.user, *.md, obj\*, bin\*, *.config, .git\*, .github\*, .editorconfig, .gitignore, .gitattributes
+dllReferences = StructureHelper
+modReferences = Luminance@1.0.12, SubworldLibrary
+weakReferences = MonoStereoMod
+
+buildIgnore = .vs\*, .idea\*, *.sln, *.csproj, *.user, *.md, obj\*, bin\*, *.config, .git\*, .github\*, LICENSE, .editorconfig, .gitignore, .gitattributes, lib\refs\*

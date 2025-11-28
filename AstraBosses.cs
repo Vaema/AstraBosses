@@ -1,19 +1,16 @@
+global using static AstraBosses.Core.Utilities.Utilities;
+
+using AstraBosses.Core.Networking;
+using Luminance.Core.ModCalls;
 using Terraria.ModLoader;
 
 namespace AstraBosses;
 
 public class AstraBosses : Mod
 {
-    /// <summary>
-    /// The instance of this mod.
-    /// </summary>
-    public static AstraBosses Instance
-    {
-        get;
-        private set;
-    }
+    // Defer packet reading to a separate class.
+    public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
 
-    public override void Load() => Instance = this;
-
-    public override void Unload() => Instance = null;
+    // Use Luminance's mod call system for cross-mod compatibility.
+    public override object Call(params object[] args) => ModCallManager.ProcessAllModCalls(this, args);
 }

@@ -1,1 +1,2 @@
-Modify this file with a description of your mod.
+Astra's Bosses is a mod that adds more bosses to Terraria.
+It also adds boss loot for those bosses.

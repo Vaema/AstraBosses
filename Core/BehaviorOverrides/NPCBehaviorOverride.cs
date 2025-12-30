@@ -72,7 +72,7 @@ public abstract class NPCBehaviorOverride : ModType<NPC, NPCBehaviorOverride>
     public virtual void ReceiveExtraAI(BitReader bitReader, BinaryReader binaryReader) { }
 
     /// <summary>
-    /// The central AI loop for the NPC.
+    ///     The central AI loop for the NPC.
     /// </summary>
     public virtual void AI() { }
 

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Terraria.ModLoader.Core;
 
-namespace AstraBosses.Core.Utilities;
+namespace AstraBosses;
 
 public static partial class Utilities
 {

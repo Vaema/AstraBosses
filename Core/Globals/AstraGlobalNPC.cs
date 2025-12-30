@@ -20,6 +20,10 @@ public partial class AstraGlobalNPC : GlobalNPC
 
     public int? TotalPlayersAtStart;
 
+    public static int CipherRetinazer = -1;
+
+    public static int CipherSpazmatism = -1;
+
     public override bool InstancePerEntity => true;
 
     #endregion Fields and Properties

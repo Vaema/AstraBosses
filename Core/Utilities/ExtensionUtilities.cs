@@ -1,7 +1,7 @@
 ﻿using AstraBosses.Core.Globals;
 using Terraria;
 
-namespace AstraBosses.Core.Utilities;
+namespace AstraBosses;
 
 public static partial class Utilities
 {

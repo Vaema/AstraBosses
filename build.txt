@@ -6,4 +6,4 @@ hideCode = false
 hideResources = false
 includeSource = true
 
-buildIgnore = .vs\*, .idea\*, *.sln, *.csproj, *.user, *.md, obj\*, bin\*, *.config, .git\*, .github\*, LICENSE, .editorconfig, .gitignore, .gitattributes, lib\refs\*
+buildIgnore = .vs\*, .idea\*, *.sln, *.csproj, *.user, *.md, obj\*, bin\*, *.config, .git\*, .github\*, Documents\*, LICENSE, .editorconfig, .gitignore, .gitattributes, lib\refs\*

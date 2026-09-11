@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -32,7 +31,7 @@ public class PacketManager : ModSystem
             return;
 
         // Assume the sender is the current client if nothing else is supplied.
-        sender ??= (short)Main.myPlayer;
+        sender ??= Main.netMode == NetmodeID.Server ? (short)-1 : (short)Main.myPlayer;
 
         ModPacket wrapperPacket = ModContent.GetInstance<AstraBosses>().GetPacket();
 
@@ -45,10 +44,10 @@ public class PacketManager : ModSystem
             wrapperPacket.Write(sender.Value);
 
             // Send the context data.
-            using MemoryStream stream = new MemoryStream();
-            using BinaryWriter writer = new BinaryWriter(stream);
+            using MemoryStream stream = new();
+            using BinaryWriter writer = new(stream);
 
-            TagCompound tagCompound = new TagCompound();
+            TagCompound tagCompound = [];
             for (int i = 0; i < context.Length; i++)
                 tagCompound[$"{i}"] = context[i];
 
@@ -97,8 +96,8 @@ public class PacketManager : ModSystem
             int contextLength = reader.ReadInt32();
             int contextByteCount = reader.ReadInt32();
             byte[] contextBytes = reader.ReadBytes(contextByteCount);
-            using MemoryStream stream = new MemoryStream(contextBytes);
-            using BinaryReader contextReader = new BinaryReader(stream);
+            using MemoryStream stream = new(contextBytes);
+            using BinaryReader contextReader = new(stream);
 
             TagCompound tag = TagIO.Read(contextReader);
             context = new object[contextLength];

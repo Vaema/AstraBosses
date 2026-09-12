@@ -81,7 +81,7 @@ public class BossMusicSyncSystem : ModSystem
         }
 
         activeTrack = track;
-        this.elapsedSeconds = NormalizeElapsed(track, elapsed, out loop);
+        elapsedSeconds = NormalizeElapsed(track, elapsed, out loop);
         isPlaying = true;
         syncVersion++;
         return true;

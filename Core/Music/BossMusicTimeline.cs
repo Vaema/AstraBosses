@@ -82,20 +82,133 @@ public sealed class BossMusicTimeline<T>
         ArgumentNullException.ThrowIfNull(track);
         double previousBeat = previous.ElapsedSeconds / track.SecondsPerBeat;
         double currentBeat = current.ElapsedSeconds / track.SecondsPerBeat;
-        bool wrapped = current.Loop > previous.Loop || currentBeat < previousBeat;
-        List<BossMusicTimelineClip> entered = [];
+        double previousAbsoluteBeat = AbsoluteBeat(previous, track);
+        double currentAbsoluteBeat = AbsoluteBeat(current, track);
+
+        if (double.IsFinite(previousAbsoluteBeat) && double.IsFinite(currentAbsoluteBeat) && currentAbsoluteBeat > previousAbsoluteBeat)
+            return GetForwardEnteredClips(previousAbsoluteBeat, currentAbsoluteBeat, current, track);
+
+        return GetLegacyWrappedClips(previousBeat, currentBeat, previous, current, track);
+    }
+
+    private IReadOnlyList<BossMusicTimelineClip> GetForwardEnteredClips(
+        double previousBeat,
+        double currentBeat,
+        BossMusicClockSnapshot snapshot,
+        BossMusicTrack track)
+    {
+        List<(double Beat, BossMusicTimelineClip Clip)> occurrences = [];
 
         foreach (BossMusicTimelineClip clip in clips)
         {
-            bool enteredCurrent = clip.StartBeat > previousBeat && clip.StartBeat <= currentBeat;
-            if (wrapped)
-                enteredCurrent = clip.StartBeat > previousBeat || clip.StartBeat <= currentBeat;
+            if (!Loops)
+            {
+                if (clip.StartBeat > previousBeat && clip.StartBeat <= currentBeat)
+                    AddOccurrence(occurrences, clip.StartBeat, clip, snapshot, track);
 
-            if (enteredCurrent && (clip.Condition is null || clip.Condition(current)))
-                entered.Add(clip);
+                continue;
+            }
+
+            double cycle = Math.Max(0d, Math.Ceiling((previousBeat - clip.StartBeat) / LengthBeats));
+            double occurrenceBeat = clip.StartBeat + cycle * LengthBeats;
+
+            while (occurrenceBeat <= currentBeat)
+            {
+                if (occurrenceBeat > previousBeat)
+                    AddOccurrence(occurrences, occurrenceBeat, clip, snapshot, track);
+
+                occurrenceBeat += LengthBeats;
+            }
         }
 
-        return entered;
+        occurrences.Sort((left, right) => left.Beat.CompareTo(right.Beat));
+        return occurrences.Select(occurrence => occurrence.Clip).ToList();
+    }
+
+    private IReadOnlyList<BossMusicTimelineClip> GetLegacyWrappedClips(
+        double previousBeat,
+        double currentBeat,
+        BossMusicClockSnapshot previous,
+        BossMusicClockSnapshot current,
+        BossMusicTrack track)
+    {
+        bool wrapped = current.Loop > previous.Loop || currentBeat < previousBeat;
+        if (!wrapped)
+            return [];
+
+        List<(double Beat, BossMusicTimelineClip Clip)> occurrences = [];
+        double trackBeats = track.DurationSeconds / track.SecondsPerBeat;
+
+        foreach (BossMusicTimelineClip clip in clips)
+        {
+            if (clip.StartBeat > previousBeat)
+                AddOccurrence(occurrences, previous.Loop * trackBeats + clip.StartBeat, clip, current, track);
+
+            if (clip.StartBeat <= currentBeat)
+                AddOccurrence(occurrences, current.Loop * trackBeats + clip.StartBeat, clip, current, track);
+        }
+
+        occurrences.Sort((left, right) => left.Beat.CompareTo(right.Beat));
+        return occurrences.Select(occurrence => occurrence.Clip).ToList();
+    }
+
+    private static void AddOccurrence(
+        List<(double Beat, BossMusicTimelineClip Clip)> occurrences,
+        double occurrenceBeat,
+        BossMusicTimelineClip clip,
+        BossMusicClockSnapshot snapshot,
+        BossMusicTrack track)
+    {
+        if (!double.IsFinite(occurrenceBeat))
+            return;
+
+        BossMusicClockSnapshot occurrenceSnapshot = SnapshotAtBeat(snapshot, occurrenceBeat, track);
+        if (clip.Condition is null || clip.Condition(occurrenceSnapshot))
+            occurrences.Add((occurrenceBeat, clip));
+    }
+
+    private static double AbsoluteBeat(BossMusicClockSnapshot snapshot, BossMusicTrack track)
+    {
+        return snapshot.Loop * (track.DurationSeconds / track.SecondsPerBeat)
+            + snapshot.ElapsedSeconds / track.SecondsPerBeat;
+    }
+
+    private static BossMusicClockSnapshot SnapshotAtBeat(
+        BossMusicClockSnapshot source,
+        double absoluteBeat,
+        BossMusicTrack track)
+    {
+        double trackBeats = track.DurationSeconds / track.SecondsPerBeat;
+        double trackLoopValue = Math.Floor(absoluteBeat / trackBeats);
+        int trackLoop = trackLoopValue >= int.MaxValue
+            ? int.MaxValue
+            : trackLoopValue <= 0d
+                ? 0
+                : (int)trackLoopValue;
+        double elapsed = (absoluteBeat - trackLoopValue * trackBeats) * track.SecondsPerBeat;
+
+        if (elapsed >= track.DurationSeconds)
+        {
+            elapsed = 0d;
+            trackLoop = trackLoop == int.MaxValue ? int.MaxValue : trackLoop + 1;
+        }
+
+        double beatPosition = elapsed / track.SecondsPerBeat;
+        double subdivisionPosition = elapsed / track.SecondsPerSubdivision;
+        long beat = (long)Math.Floor(beatPosition);
+        long subdivision = (long)Math.Floor(subdivisionPosition);
+
+        return new BossMusicClockSnapshot(
+            source.TrackKey,
+            elapsed,
+            beat,
+            subdivision,
+            beatPosition - beat,
+            subdivisionPosition - subdivision,
+            elapsed / track.DurationSeconds,
+            trackLoop,
+            source.IsPlaying,
+            source.SyncVersion);
     }
 
     private static double Modulo(double value, double modulus)

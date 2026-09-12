@@ -1,108 +1,108 @@
-﻿//using Terraria;
-//using Terraria.ID;
-//using Terraria.ModLoader;
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
-//namespace AstraBosses.Content.NPCs.Bosses.Veronica;
+namespace AstraBosses.Content.NPCs.Bosses.Veronica;
 
-//public partial class VoidKeeperBoss : ModNPC
-//{
-//    #region Enumerations
+public partial class VeronicaBoss : ModNPC
+{
+    #region Enumerations
 
-//    public enum State
-//    {
-//        ShootBolts,
-//        TrailCharge,
-//    }
+    public enum State
+    {
+        ShootBolts,
+        TrailCharge,
+    }
 
-//    #endregion
+    #endregion
 
-//    #region Fields and Properties
+    #region Fields and Properties
 
-//    public State CurrentState
-//    {
-//        get => (State)(int)NPC.ai[0];
-//        set => NPC.ai[0] = (int)value;
-//    }
+    public State CurrentState
+    {
+        get => (State)(int)NPC.ai[0];
+        set => NPC.ai[0] = (int)value;
+    }
 
-//    public ref float AttackTimer => ref NPC.ai[1];
+    public ref float AttackTimer => ref NPC.ai[1];
 
-//    public Player Target => Main.player[NPC.target];
+    public Player Target => Main.player[NPC.target];
 
-//    #endregion
+    #endregion
 
-//    #region Initialization
+    #region Initialization
 
-//    public override void SetStaticDefaults()
-//    {
-//        Main.npcFrameCount[Type] = 1;
+    public override void SetStaticDefaults()
+    {
+        Main.npcFrameCount[Type] = 1;
 
-//        NPCID.Sets.TrailCacheLength[Type] = 3;
-//        NPCID.Sets.TrailingMode[Type] = 0;
-//        NPCID.Sets.BossBestiaryPriority.Add(Type);
-//    }
-    
-//    public override void SetDefaults()
-//    {
-//        NPC.width = 72;
-//        NPC.height = 94;
+        NPCID.Sets.TrailCacheLength[Type] = 3;
+        NPCID.Sets.TrailingMode[Type] = 0;
+        NPCID.Sets.BossBestiaryPriority.Add(Type);
+    }
 
-//        NPC.lifeMax = 125000;
-//        NPC.damage = 125;
-//        NPC.defense = 25;
-//        NPC.knockBackResist = 0f;
-//        NPC.npcSlots = 50f;
+    public override void SetDefaults()
+    {
+        NPC.width = 72;
+        NPC.height = 94;
 
-//        NPC.aiStyle = -1;
-//        AIType = -1;
+        NPC.lifeMax = 125000;
+        NPC.damage = 125;
+        NPC.defense = 25;
+        NPC.knockBackResist = 0f;
+        NPC.npcSlots = 50f;
 
-//        NPC.boss = true;
-//        NPC.noGravity = true;
-//        NPC.noTileCollide = true;
-//        NPC.lavaImmune = true;
-//        NPC.dontTakeDamage = true;
-//        NPC.netAlways = true;
-//        NPC.value = Item.sellPrice(platinum: 2, gold: 50);
+        NPC.aiStyle = -1;
+        AIType = -1;
 
-//        NPC.HitSound = null;
-//        NPC.DeathSound = null;
-//    }
+        NPC.boss = true;
+        NPC.noGravity = true;
+        NPC.noTileCollide = true;
+        NPC.lavaImmune = true;
+        NPC.dontTakeDamage = true;
+        NPC.netAlways = true;
+        NPC.value = Item.sellPrice(platinum: 2, gold: 50);
 
-//    #endregion
+        NPC.HitSound = null;
+        NPC.DeathSound = null;
+    }
 
-//    #region AI
+    #endregion
 
-//    public override void AI()
-//    {
-//        // Find the nearest target.
-//        NPC.TargetClosest();
+    #region AI
 
-//        // Despawn if all remaining targets are dead.
-//        if (Target.dead || !Target.active)
-//        {
-//            NPC.TargetClosest();
-//            if (Target.dead || !Target.active)
-//            {
-//                NPC.velocity.Y--;
-//                if (Target.Distance(NPC.Center) > 300f)
-//                {
-//                    NPC.active = false;
-//                    NPC.netUpdate = true;
-//                }
-//                return;
-//            }
-//        }
+    public override void AI()
+    {
+        // Find the nearest target.
+        NPC.TargetClosest();
 
-//        // Perform the following AI states.
-//        switch (CurrentState)
-//        {
-//            case State.ShootBolts:
-//                //ShootBolts();
-//                break;
-//        }
+        // Despawn if all remaining targets are dead.
+        if (Target.dead || !Target.active)
+        {
+            NPC.TargetClosest();
+            if (Target.dead || !Target.active)
+            {
+                NPC.velocity.Y--;
+                if (Target.Distance(NPC.Center) > 300f)
+                {
+                    NPC.active = false;
+                    NPC.netUpdate = true;
+                }
+                return;
+            }
+        }
 
-//        // Increment the attack timer.
-//        AttackTimer++;
-//    }
+        // Perform the following AI states.
+        switch (CurrentState)
+        {
+            case State.ShootBolts:
+                //ShootBolts();
+                break;
+        }
 
-//    #endregion
-//}
+        // Increment the attack timer.
+        AttackTimer++;
+    }
+
+    #endregion
+}
